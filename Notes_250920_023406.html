@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva: App de Pagos Cashless</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Warm Neutral -->
+    <!-- Application Structure Plan: He diseñado la aplicación en secciones clave para transformar el documento de requisitos en un dashboard interactivo. La estructura es: 1) Visión General para un contexto rápido, 2) Flujos de Usuario para visualizar los procesos clave, 3) Funcionalidades por Rol para una clara separación de tareas, y 4) Modelo de Datos para entender la arquitectura de la información. Esta estructura orientada a tareas es más intuitiva para un equipo de desarrollo que la estructura lineal del documento original, ya que permite acceder directamente a la información relevante. -->
+    <!-- Visualization & Content Choices:
+        - Visión General -> Bloques de texto -> N/A -> Proporciona un resumen conciso del proyecto. -> HTML/CSS.
+        - Flujos de Pago y Devolución -> Diagramas de Flujo -> N/A -> Visualiza la secuencia de acciones y los actores involucrados de manera más efectiva que el texto plano. -> HTML/Tailwind.
+        - Acciones Principales -> Funcionalidades por Rol -> Tarjetas/Listas en dos columnas -> N/A -> Facilita la comparación de permisos y acciones entre Espectadores y Administradores. -> HTML/Tailwind.
+        - Entidades de BD -> Modelo de Datos -> Tarjetas interconectadas -> N/A -> Permite una exploración clara de la estructura de la base de datos y sus relaciones. -> HTML/Tailwind. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        .section-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .nav-link.active {
+            background-color: #4f46e5;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-64 bg-white border-b md:border-r border-slate-200 p-4 md:p-6 sticky top-0 md:h-screen">
+            <h1 class="text-xl font-bold text-indigo-600">Guía de Desarrollo</h1>
+            <p class="text-sm text-slate-500 mt-1">App de Pagos Cashless</p>
+            <nav class="mt-8 flex flex-row md:flex-col gap-2 overflow-x-auto pb-4 md:pb-0">
+                <a href="#overview" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors active">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>Visión General</span>
+                </a>
+                <a href="#flows" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                    <span>Flujos de Usuario</span>
+                </a>
+                <a href="#features" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                    <span>Funcionalidades</span>
+                </a>
+                <a href="#data-model" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4M4 7l8 5 8-5" /></svg>
+                    <span>Modelo de Datos</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 md:p-10">
+            <!-- Overview Section -->
+            <section id="overview" class="content-section section-fade-in">
+                <h2 class="text-3xl font-bold mb-2">Visión General del Proyecto</h2>
+                <p class="text-slate-600 max-w-3xl">Este documento describe las características principales y requisitos funcionales para el desarrollo de una aplicación de cobro sin efectivo (cashless). El objetivo es crear una herramienta que permita a los usuarios realizar pagos de forma rápida y segura, eliminando la necesidad de transacciones en efectivo.</p>
+
+                <div class="grid md:grid-cols-2 gap-6 mt-8">
+                    <div class="bg-white p-6 rounded-xl border border-slate-200">
+                        <h3 class="font-bold text-lg text-indigo-600">Usuarios de la Plataforma</h3>
+                        <ul class="list-disc list-inside mt-2 text-slate-600 space-y-1">
+                            <li><span class="font-semibold">Espectadores:</span> Usuarios finales que utilizan la app.</li>
+                            <li><span class="font-semibold">Administradores:</span> Personal encargado de la gestión de la plataforma.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-slate-200">
+                        <h3 class="font-bold text-lg text-indigo-600">Registro y Autenticación</h3>
+                        <p class="mt-2 text-slate-600">El registro se realizará a través de Email, vinculado al tag, DNI y una foto.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- User Flows Section -->
+            <section id="flows" class="content-section section-fade-in hidden">
+                <h2 class="text-3xl font-bold mb-6">Flujos de Usuario y Lógica de Negocio</h2>
+                <div class="space-y-10">
+                    <!-- Flow: Payment Process -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4">Flujo de Proceso de Pago</h3>
+                        <div class="bg-white p-6 rounded-xl border border-slate-200">
+                            <ol class="mt-4 space-y-4 relative pl-5">
+                                <li class="absolute left-0 top-0 bottom-0 w-0.5 bg-slate-200"></li>
+                                <li class="flex items-start gap-4 relative">
+                                    <div class="bg-indigo-500 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold z-10 ring-4 ring-white">1</div>
+                                    <div><span class="font-semibold">Staff:</span> Ingresa el monto en la app móvil.</div>
+                                </li>
+                                <li class="flex items-start gap-4 relative">
+                                    <div class="bg-indigo-500 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold z-10 ring-4 ring-white">2</div>
+                                    <div><span class="font-semibold">Sistema:</span> Genera una solicitud de pago única (CVU/alias, monto) y la muestra en la pantalla del staff.</div>
+                                </li>
+                                <li class="flex items-start gap-4 relative">
+                                    <div class="bg-indigo-500 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold z-10 ring-4 ring-white">3</div>
+                                    <div><span class="font-semibold">Usuario:</span> Escanea el QR o copia el CVU y realiza la transferencia desde su banco.</div>
+                                </li>
+                                <li class="flex items-start gap-4 relative">
+                                    <div class="bg-green-500 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold z-10 ring-4 ring-white">4</div>
+                                    <div><span class="font-semibold">Acreditación:</span> El sistema confirma la transferencia y, al escanear el tag, se acredita el saldo.</div>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    <!-- Flow: Refund -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4">Flujo: Solicitud de Devolución</h3>
+                        <div class="bg-white p-6 rounded-xl border border-slate-200">
+                             <ol class="mt-4 space-y-4 relative pl-5">
+                                <li class="absolute left-0 top-0 bottom-0 w-0.5 bg-slate-200"></li>
+                                <li class="flex items-start gap-4 relative">
+                                    <div class="bg-indigo-500 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold z-10 ring-4 ring-white">1</div>
+                                    <div><span class="font-semibold">Solicitud:</span> El usuario presiona "solicitar devolución" en su perfil.</div>
+                                </li>
+                                <li class="flex items-start gap-4 relative">
+                                    <div class="bg-indigo-500 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold z-10 ring-4 ring-white">2</div>
+                                    <div><span class="font-semibold">Notificación al Admin:</span> Se genera una solicitud para el administrador con toda la información del usuario.</div>
+                                </li>
+                                <li class="flex items-start gap-4 relative">
+                                    <div class="bg-indigo-500 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold z-10 ring-4 ring-white">3</div>
+                                    <div><span class="font-semibold">Proceso Manual:</span> El administrador realiza la devolución bancaria manualmente.</div>
+                                </li>
+                                <li class="flex items-start gap-4 relative">
+                                    <div class="bg-green-500 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold z-10 ring-4 ring-white">4</div>
+                                    <div><span class="font-semibold">Ajuste de Saldo:</span> El administrador ajusta el saldo del tag a cero.</div>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features by Role Section -->
+            <section id="features" class="content-section section-fade-in hidden">
+                <h2 class="text-3xl font-bold mb-6">Funcionalidades por Rol</h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Espectador Column -->
+                    <div class="bg-white p-6 rounded-xl border border-slate-200">
+                        <h3 class="text-2xl font-semibold mb-4 text-center">👤 Espectador</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-bold text-lg text-indigo-600">Web</h4>
+                                <ul class="list-disc list-inside mt-2 text-slate-600 space-y-1">
+                                    <li>Registro y alta de tarjeta de carga.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg text-indigo-600">App Móvil</h4>
+                                <ul class="list-disc list-inside mt-2 text-slate-600 space-y-1">
+                                    <li>Asignación de tarjeta a usuario.</li>
+                                    <li>Carga de saldo.</li>
+                                    <li>Compra en puntos de venta.</li>
+                                    <li>Chequeo de saldo.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Administrador Column -->
+                    <div class="bg-white p-6 rounded-xl border border-slate-200">
+                        <h3 class="text-2xl font-semibold mb-4 text-center">🛠️ Administrador</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-bold text-lg text-indigo-600">Web</h4>
+                                <ul class="list-disc list-inside mt-2 text-slate-600 space-y-1">
+                                    <li>Gestión de puntos de venta (Alta, baja, actualización).</li>
+                                    <li>Gestión de usuarios (Alta, baja, actualización).</li>
+                                    <li>Gestión de eventos (Alta, baja, actualización).</li>
+                                    <li>Gestión de empresas (Alta, baja, actualización).</li>
+                                    <li>Carga del menú del punto de venta.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Model Section -->
+            <section id="data-model" class="content-section section-fade-in hidden">
+                <h2 class="text-3xl font-bold mb-6">Modelo de Datos</h2>
+                 <p class="text-slate-600 max-w-3xl mb-8">A continuación se describen las principales entidades de datos y sus campos esenciales según el documento.</p>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-xl border border-slate-200">
+                        <h3 class="font-bold text-lg">Usuarios</h3>
+                        <ul class="mt-2 text-slate-600 space-y-1 text-sm">
+                            <li>- ID de usuario</li>
+                            <li>- Nombre</li>
+                            <li>- Foto</li>
+                            <li>- ID de cuenta de pago</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-slate-200">
+                        <h3 class="font-bold text-lg">Transacciones</h3>
+                        <ul class="mt-2 text-slate-600 space-y-1 text-sm">
+                            <li>- Número de orden de compra</li>
+                            <li>- Usuario asignado</li>
+                            <li>- Evento</li>
+                            <li>- Fecha y hora</li>
+                            <li>- Monto</li>
+                            <li>- Descripción</li>
+                            <li>- Punto de venta</li>
+                            <li>- Tipo de Transacción (Carga de Saldo, Compra, Devolución)</li>
+                            <li>- ID del Punto de Venta</li>
+                            <li>- ID del Producto/Servicio</li>
+                            <li>- ID del Tag</li>
+                            <li>- Monto Anterior/Monto Nuevo</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-slate-200">
+                        <h3 class="font-bold text-lg">Tag de Carga</h3>
+                        <ul class="mt-2 text-slate-600 space-y-1 text-sm">
+                            <li>- ID del Tag</li>
+                            <li>- ID del usuario asociado</li>
+                            <li>- Saldo actual</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-slate-200">
+                        <h3 class="font-bold text-lg">Puntos de Venta</h3>
+                        <ul class="mt-2 text-slate-600 space-y-1 text-sm">
+                            <li>- ID del Punto de Venta</li>
+                            <li>- Menú / Carta</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-slate-200">
+                        <h3 class="font-bold text-lg">Evento</h3>
+                        <ul class="mt-2 text-slate-600 space-y-1 text-sm">
+                            <li>- ID del Evento</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            function updateContent(hash) {
+                const targetHash = hash || '#overview';
+
+                contentSections.forEach(section => {
+                    if ('#' + section.id === targetHash) {
+                        section.classList.remove('hidden');
+                    } else {
+                        section.classList.add('hidden');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === targetHash) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetHash = this.getAttribute('href');
+                    history.pushState(null, null, targetHash);
+                    updateContent(targetHash);
+                });
+            });
+
+            window.addEventListener('popstate', () => {
+                updateContent(window.location.hash);
+            });
+
+            // Initial load
+            updateContent(window.location.hash);
+        });
+    </script>
+</body>
+</html>
